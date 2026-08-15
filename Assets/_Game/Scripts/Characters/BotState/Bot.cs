@@ -13,11 +13,24 @@ public class Bot : Character
 
     public float IdleTimer { get; set; }
 
+    public bool IsDestinationReached 
+    {
+        get 
+        {
+            if (agent == null || !agent.isOnNavMesh) return true;
+            
+            Vector3 dest = destination;
+            dest.y = TF.position.y; 
+            
+            return Vector3.Distance(TF.position, dest) < 0.1f;
+        }
+    }
+
     public override void OnInit()
     {
         base.OnInit();
 
-        float randomSize = Random.Range(1.5f, 2.5f);
+        float randomSize = Random.Range(0.8f, 1.2f);
         SetSize(randomSize);
 
         EnableAgent();
@@ -33,7 +46,7 @@ public class Bot : Character
 
     private void Update()
     {
-        //if (!GameManager.IsState(GameState.GamePlay)) return;
+        if (!GameManager.IsState(GameState.Playing)) return;
 
         currentState?.OnExecute(this);
     }
@@ -86,29 +99,24 @@ public class Bot : Character
         ChangeAnim(GameConfig.ANIM_IDLE); 
     }
 
-    public bool CheckDestinationReached()
-    {
-        if (agent == null || !agent.isOnNavMesh) return true;
-        if (agent.pathPending) return false;
-        if (agent.remainingDistance > agent.stoppingDistance) return false;
-        if (agent.hasPath && agent.velocity.sqrMagnitude > 0.001f) return false;
-
-        return true;
-    }
-
     public bool HasAttackTarget()
     {
         return CanAttack();
     }
 
-    public new void OnHit()
+    public void OnHit()
     {
         if (IsDead) return;
 
         IsDead = true;
         DisableAgent();
-        ChangeBotStateTo(null);
+        ChangeBotStateTo(null); 
         ChangeAnim(GameConfig.ANIM_DEAD);
+
+        if (BotManager.Ins != null)
+        {
+            BotManager.Ins.OnBotDeath(this);
+        }
 
         Invoke(nameof(DespawnBot), 2f);
     }
@@ -116,5 +124,39 @@ public class Bot : Character
     private void DespawnBot()
     {
         OnDespawn();
+    }
+    
+    public void MoveToRandomDestination()
+    {
+        Vector3 randomPoint = GetRandomNavMeshPoint(TF.position, 15f);
+        SetDestination(randomPoint);
+    }
+
+    private Vector3 GetRandomNavMeshPoint(Vector3 center, float range)
+    {
+        Vector3 randomDir = Random.insideUnitSphere * range;
+        randomDir += center;
+        randomDir.y = 0;
+
+        UnityEngine.AI.NavMeshHit hit;
+        if (UnityEngine.AI.NavMesh.SamplePosition(randomDir, out hit, range, UnityEngine.AI.NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        return center;
+    }
+    
+    private float currentIdleDuration;
+    
+    public void StartIdleTimer()
+    {
+        IdleTimer = 0f;
+        currentIdleDuration = Random.Range(1.5f, 2.5f);
+    }
+
+    public bool IsIdleTimeFinished()
+    {
+        IdleTimer += Time.deltaTime;
+        return IdleTimer >= currentIdleDuration;
     }
 }
