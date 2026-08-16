@@ -20,11 +20,7 @@ public class Player : Character
     private void Update()
     {
         HandleInput();  
-    }
-
-    private void FixedUpdate()
-    {
-        MovePhysics();
+        MoveTransform();
     }
 
     private void SetUpCamera()
@@ -100,29 +96,22 @@ public class Player : Character
 
         if (currentInputDirection.sqrMagnitude >= 0.01f)
         {
-            RotateTowardsFixed(currentInputDirection);
-            TranslateFixed(currentInputDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(currentInputDirection);
+            TF.rotation = Quaternion.Slerp(TF.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+
+            TF.Translate(currentInputDirection * moveSpeed * Time.deltaTime, Space.World);
+            
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            }
         }
         else
         {
-            Vector3 vel = rb.linearVelocity;
-            vel.x = 0;
-            vel.z = 0;
-            rb.linearVelocity = vel;
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            }
         }
-    }
-
-    private void TranslateFixed(Vector3 direction)
-    {
-        Vector3 newVel = direction * moveSpeed;
-        newVel.y = rb.linearVelocity.y;
-        rb.linearVelocity = newVel;
-    }
-
-    private void RotateTowardsFixed(Vector3 direction)
-    {
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        Quaternion newRotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * rotateSpeed);
-        rb.MoveRotation(newRotation);
     }
 }
