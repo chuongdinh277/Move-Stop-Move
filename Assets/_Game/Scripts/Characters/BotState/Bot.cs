@@ -79,7 +79,7 @@ public class Bot : Character
     public void SetDestination(Vector3 targetPos)
     {
         if (agent == null || !agent.isOnNavMesh) return;
-
+        CancelAttack();
         destination = targetPos;
         agent.SetDestination(destination);
         agent.isStopped = false;
@@ -104,26 +104,16 @@ public class Bot : Character
         return CanAttack();
     }
 
-    public void OnHit()
+    protected override void OnDeath()
     {
-        if (IsDead) return;
-
-        IsDead = true;
+        base.OnDeath();
         DisableAgent();
         ChangeBotStateTo(null); 
-        ChangeAnim(GameConfig.ANIM_DEAD);
 
         if (BotManager.Ins != null)
         {
             BotManager.Ins.OnBotDeath(this);
         }
-
-        Invoke(nameof(DespawnBot), 2f);
-    }
-
-    private void DespawnBot()
-    {
-        OnDespawn();
     }
     
     public void MoveToRandomDestination()
