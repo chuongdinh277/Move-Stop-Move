@@ -176,4 +176,59 @@ public class Character : MonoBehaviour
             currentWeapon.transform.localRotation = Quaternion.identity;
         }
     }
+    public void ChangeHat(GameObject hatPrefab)
+    {
+        if (currentHat != null) Destroy(currentHat);
+
+        if (hatPrefab != null && headHolder != null)
+        {
+            currentHat = Instantiate(hatPrefab, headHolder);
+            currentHat.transform.localPosition = Vector3.zero;
+            currentHat.transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    public void ChangePant(Material pantMat)
+    {
+        if (pantMat != null && pantMeshRenderer != null)
+        {
+            pantMeshRenderer.material = pantMat;
+        }
+    }
+
+    public void ChangeShield(GameObject shieldPrefab)
+    {
+        if (currentShield != null) Destroy(currentShield);
+        
+        isHoldingShield = shieldPrefab != null;
+
+        if (shieldPrefab != null && leftHandHolder != null)
+        {
+            currentShield = Instantiate(shieldPrefab, leftHandHolder);
+            currentShield.transform.localPosition = Vector3.zero;
+            currentShield.transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    public void ChangeWing(GameObject wingPrefab)
+    {
+        if (currentWing != null) Destroy(currentWing);
+
+        if (wingPrefab != null && backHolder != null)
+        {
+            currentWing = Instantiate(wingPrefab, backHolder);
+            currentWing.transform.localPosition = Vector3.zero;
+            currentWing.transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    public void ChangeSetFull(SetFullItemData setData)
+    {
+        if (setData == null) return;
+        
+        ChangeHat(setData.hatPrefab);
+        ChangePant(setData.pantMat);
+        ChangeShield(setData.leftHandPrefab);
+        ChangeWing(setData.accessoryPrefab);
+    }
 }
