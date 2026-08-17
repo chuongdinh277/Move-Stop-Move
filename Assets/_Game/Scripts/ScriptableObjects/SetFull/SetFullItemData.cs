@@ -10,6 +10,7 @@ public class SetFullItemData
     public Material pantMat;
     public GameObject accessoryPrefab;
     public GameObject leftHandPrefab;
+    public GameObject tailPrefab;
 
     public int cost;
 }

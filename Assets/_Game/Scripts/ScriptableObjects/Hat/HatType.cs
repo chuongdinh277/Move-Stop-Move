@@ -14,4 +14,5 @@ public enum HatType
     HeadPhone = 8,
     Horn = 9,
     Rau = 10,
+    Head_Angle = 11
 }
