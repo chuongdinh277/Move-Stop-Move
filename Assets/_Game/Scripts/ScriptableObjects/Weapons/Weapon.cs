@@ -8,13 +8,22 @@ public class Weapon : MonoBehaviour
 
     public WeaponType Type => weaponType;
 
-    public void Throw(Character attacker, Vector3 direction)
+    public void Throw(Character attacker, Vector3 targetPosition, bool isTargeting)
     {
         gameObject.SetActive(false); 
 
         Vector3 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
+        spawnPos.y = attacker.TF.position.y + 1f;
+
+        Vector3 exactDirection = attacker.TF.forward;
+
+        if (isTargeting)
+        {
+            targetPosition.y = spawnPos.y; 
+            exactDirection = (targetPosition - spawnPos).normalized;
+        }
+
         BulletBase bullet = SimplePool.Spawn<BulletBase>(bulletPoolType, spawnPos, Quaternion.identity);
-        
-        bullet.OnInit(attacker, direction);
-    }  
+        bullet.OnInit(attacker, exactDirection);
+    }
 }

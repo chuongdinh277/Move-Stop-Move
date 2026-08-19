@@ -10,10 +10,13 @@ public class BulletBase : GameUnit
     protected Character attacker;
     protected float timer;
     protected Vector3 moveDirection;
-
+    protected Vector3 baseScale;
+    protected virtual void Awake()
+    {
+        baseScale = transform.localScale;
+    }
     protected virtual void Update()
     {
-        // Bay theo hướng cố định trong không gian World, không phụ thuộc vào góc xoay của model
         transform.Translate(moveDirection * SPEED * Time.deltaTime, Space.World);
         HandleLifeTime();
     }
@@ -41,6 +44,8 @@ public class BulletBase : GameUnit
         ResetLifeTime();
         SetDirection(direction);
         moveDirection = direction.normalized;
+        
+        transform.localScale = baseScale * attacker.size; 
     }
 
     protected void SetDirection(Vector3 direction)

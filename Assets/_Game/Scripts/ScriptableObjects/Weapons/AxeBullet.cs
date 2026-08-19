@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class KnifeBullet : BulletBase
+public class AxeBullet : BulletBase
 {
     [Header("Spin Settings")]
-    [SerializeField] private float rotateSpeed = 0;
+    [SerializeField] private float rotateSpeed = -720f;
     [SerializeField] private Transform visualMesh; 
     [SerializeField] private bool isFlat = true;
 
