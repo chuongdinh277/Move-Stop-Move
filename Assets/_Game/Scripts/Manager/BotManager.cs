@@ -9,6 +9,10 @@ public class BotManager : Singleton<BotManager>
     [SerializeField] private int maxTotalBots = 50;
     [SerializeField] private float spawnRadius = 25f;
 
+    [Header("Bot data")]
+    [SerializeField] private WeaponData weaponDataConfig;
+    [SerializeField] private HatData hatDataConfig;
+    [SerializeField] private PantData pantDataConfig;
     public List<Bot> ActiveBots { get; private set; } = new List<Bot>();
 
     private int totalSpawnedBots = 0;
@@ -85,6 +89,35 @@ public class BotManager : Singleton<BotManager>
         CancelInvoke(nameof(SpawnBot));
     }
 
+    public Weapon GetRandomWeapon()
+    {
+        if (weaponDataConfig != null && weaponDataConfig.weaponList.Count > 0)
+        {
+            int ran = Random.Range(0, weaponDataConfig.weaponList.Count);
+            return weaponDataConfig.weaponList[ran].weaponPrefab;
+        }
+        return null;
+    }
+
+    public GameObject GetRandomHat()
+    {
+        if (hatDataConfig != null && hatDataConfig.hatList.Count > 0)
+        {
+            int ran = Random.Range(0, hatDataConfig.hatList.Count);
+            return hatDataConfig.hatList[ran].hatPrefab;
+        }
+        return null;
+    }
+
+    public Material GetRandomPant()
+    {
+        if (pantDataConfig != null && pantDataConfig.pantList.Count > 0)
+        {
+            int ran = Random.Range(0, pantDataConfig.pantList.Count);
+            return pantDataConfig.pantList[ran].pantMat;
+        }
+        return null;
+    }
     private Vector3 GetRandomSpawnPoint()
     {
         Vector3 randomDir = Random.insideUnitSphere * spawnRadius;
@@ -99,4 +132,6 @@ public class BotManager : Singleton<BotManager>
         
         return TF.position;
     }
+
+
 }

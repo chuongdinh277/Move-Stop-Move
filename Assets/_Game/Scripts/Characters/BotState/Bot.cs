@@ -33,6 +33,9 @@ public class Bot : Character
         float randomSize = Random.Range(0.8f, 1.2f);
         SetSize(randomSize);
 
+        RandomWeapon();
+        RandomHat();
+        RandomPant();
         EnableAgent();
         ChangeBotStateTo(BotStates.Idle);
     }
@@ -51,6 +54,7 @@ public class Bot : Character
         currentState?.OnExecute(this);
     }
 
+    
     public void ChangeBotStateTo(BotState newState)
     {
         currentState?.OnExit(this);
@@ -148,5 +152,33 @@ public class Bot : Character
     {
         IdleTimer += Time.deltaTime;
         return IdleTimer >= currentIdleDuration;
+    }
+
+
+    private void RandomWeapon()
+    {
+        Weapon randomWeapon = BotManager.Ins.GetRandomWeapon();
+        if (randomWeapon != null)
+        {
+            ChangeWeapon(randomWeapon);
+        }
+    }
+
+    private void RandomHat()
+    {
+        GameObject randomHat = BotManager.Ins.GetRandomHat();
+        if (randomHat != null)
+        {
+            ChangeHat(randomHat);
+        }
+    }
+
+    private void RandomPant()
+    {
+        Material randomPant = BotManager.Ins.GetRandomPant();
+        if (randomPant != null)
+        {
+            ChangePant(randomPant);
+        }
     }
 }
