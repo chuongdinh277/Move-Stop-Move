@@ -36,21 +36,38 @@ public class CharacterLeveling
 
     private void CheckLevelUp()
     {
-        CharacterLevelItemData config = character.GetLevelData().GetLevelData(character.GetLevel());
-        if (config == null) return;
-
-        while (currentExp >= config.expRequire && character.GetLevel() < 5)
+        while (character.GetLevel() < 5)
         {
-            currentExp -= config.expRequire;
-            LevelUp();
-            
-            config = character.GetLevelData().GetLevelData(character.GetLevel());
-            if (config == null) break;
+            CharacterLevelItemData config = character.GetLevelData().GetLevelData(character.GetLevel());
+            if (config == null) return;
+
+            if (currentExp >= config.expRequire)
+            {
+                LevelUp();
+            }
+            else
+            {
+                break;
+            }
         }
+        
     }
 
     private void LevelUp()
     {
         character.SetLevel(character.GetLevel() + 1);
+
+        CharacterLevelItemData newConfig = character.GetLevelData().GetLevelData(character.GetLevel());
+
+        if (newConfig != null)
+        {
+            character.AddSize(newConfig.size);
+            character.SetAttackRange(character.GetAttackRange() + newConfig.attackRange);
+        }
+    }
+
+    public void RessetLevel()
+    {
+        currentExp = 0;
     }
 }
