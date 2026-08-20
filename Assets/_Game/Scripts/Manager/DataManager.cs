@@ -57,15 +57,15 @@ public class DataManager : Singleton<DataManager>
         SaveData();
 
     }
-    public WeaponType GetCurrentWeapon() => (WeaponType)data.weaponEquipID;
+    public WeaponType currentWeapon => (WeaponType)data.weaponEquipID;
     public void SetCurrentWeapon(WeaponType type) { data.weaponEquipID = (int)type; SaveData(); }
-    public HatType GetCurrentHat() => (HatType)data.hatEquipID;
+    public HatType currentHat => (HatType)data.hatEquipID;
     public void SetCurrentHat(HatType type) { data.hatEquipID = (int)type; SaveData(); }
-    public PantType GetCurrentPant() => (PantType)data.pantEquipID;
+    public PantType currentPant => (PantType)data.pantEquipID;
     public void SetCurrentPant(PantType type) { data.pantEquipID = (int)type; SaveData(); }
-    public AccessoryType GetCurrentAccessory() => (AccessoryType)data.accessoryEquipID;
+    public AccessoryType currentAccessory => (AccessoryType)data.accessoryEquipID;
     public void SetCurrentAccessory(AccessoryType type) { data.accessoryEquipID = (int)type; SaveData(); }
-    public SetFullItemType GetCurrentSetFull() => (SetFullItemType)data.setFullEquipID;
+    public SetFullItemType currentSetFull => (SetFullItemType)data.setFullEquipID;
     public void SetCurrentSetFull(SetFullItemType type) { data.setFullEquipID = (int)type; SaveData(); }
 
     public int GetGold()
