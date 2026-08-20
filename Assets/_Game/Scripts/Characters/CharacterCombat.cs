@@ -48,7 +48,7 @@ public class CharacterCombat
         RotateToTarget(target);
         character.ChangeAnim(GameConfig.ANIM_ATTACK);
         
-        character.Invoke(nameof(character.SpawnWeaponBullet), character.GetThrowDelay());
+        character.Invoke(nameof(character.ExecuteThrow), character.GetThrowDelay());
         character.Invoke(nameof(character.ResetAttackState), character.GetAttackSpeed());
     }
 
@@ -65,21 +65,28 @@ public class CharacterCombat
         }
     }
 
-    public void SpawnWeaponBullet()
+    public void ExecuteThrow()
     {
         if (character.GetCurrentWeapon() == null || character.GetIsDead()) return;
 
         Vector3 throwDir = character.TF.forward;
         CharacterBase target = GetValidTarget();
 
+        Vector3 throwTargetPos;
+
         if (target != null)
         {
-            throwDir = (target.TF.position - character.TF.position).normalized;
+            throwTargetPos = target.TF.position;
+            throwDir = (throwTargetPos - character.TF.position).normalized;
             throwDir.y = 0;
             character.TF.rotation = Quaternion.LookRotation(throwDir);
         }
-        
-        character.GetCurrentWeapon().Throw(character, target.TF.position, true);
+        else
+        {
+            float maxRange = character.GetAttackRange() * character.GetSize();
+            throwTargetPos = character.TF.position + character.TF.forward * maxRange;
+        }
+        character.GetCurrentWeapon().Throw(character, throwTargetPos, true);
     }
 
     public void ResetAttackState()
@@ -96,7 +103,7 @@ public class CharacterCombat
     {
         if (character.GetIsAttacking()) 
         {
-            character.CancelInvoke(nameof(character.SpawnWeaponBullet));
+            character.CancelInvoke(nameof(character.ExecuteThrow));
             character.CancelInvoke(nameof(character.ResetAttackState));
             ResetAttackState();
         }
