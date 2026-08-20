@@ -1,8 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterEquipment
 {
     private CharacterBase character;
+    private const string HAT = "Hat_";
+    private const string WEAPON = "Weapon_";
+    private const string SHIELD = "Shield_";
+    private const string WING = "Wing_";
+    private Dictionary<string, GameObject> wardrobe = new Dictionary<string, GameObject>();
 
     public CharacterEquipment(CharacterBase character)
     {
@@ -11,28 +17,118 @@ public class CharacterEquipment
 
     public void ChangeWeapon(Weapon weaponPrefab)
     {
-        if (character.GetCurrentWeapon() != null)
-        {
-            Object.Destroy(character.GetCurrentWeapon().gameObject);
-        }
+        if (character.GetCurrentWeapon() != null) character.GetCurrentWeapon().gameObject.SetActive(false);
 
         if (weaponPrefab != null && character.GetWeaponHolder() != null)
         {
-            character.SetCurrentWeapon(Object.Instantiate(weaponPrefab, character.GetWeaponHolder()));
-            character.GetCurrentWeapon().transform.localPosition = Vector3.zero;
-            character.GetCurrentWeapon().transform.localRotation = Quaternion.identity;
+            string itemName = WEAPON + weaponPrefab.name;
+            if (wardrobe.ContainsKey(itemName))
+            {
+                character.SetCurrentWeapon(wardrobe[itemName].GetComponent<Weapon>());
+                character.GetCurrentWeapon().gameObject.SetActive(true);
+            }
+            else
+            {
+                Weapon newWeapon = Object.Instantiate(weaponPrefab, character.GetWeaponHolder(), false);
+                newWeapon.transform.localPosition = Vector3.zero;
+                newWeapon.transform.localRotation = Quaternion.identity;
+                wardrobe.Add(itemName, newWeapon.gameObject);
+                character.SetCurrentWeapon(newWeapon);
+            }
         }
     }
 
     public void ChangeHat(GameObject hatPrefab)
     {
-        if (character.GetCurrentHat() != null) Object.Destroy(character.GetCurrentHat());
+        if (character.GetCurrentHat() != null) character.GetCurrentHat().SetActive(false);
 
         if (hatPrefab != null && character.GetHeadHolder() != null)
         {
-            character.SetCurrentHat(Object.Instantiate(hatPrefab, character.GetHeadHolder()));
-            character.GetCurrentHat().transform.localPosition = Vector3.zero;
-            character.GetCurrentHat().transform.localRotation = Quaternion.identity;
+            string itemName = HAT + hatPrefab.name;
+            if (wardrobe.ContainsKey(itemName))
+            {
+                character.SetCurrentHat(wardrobe[itemName]);
+                character.GetCurrentHat().SetActive(true);
+            }
+            else
+            {
+                GameObject newHat = Object.Instantiate(hatPrefab, character.GetHeadHolder(), false);
+                newHat.transform.localPosition = Vector3.zero;
+                newHat.transform.localRotation = Quaternion.identity;
+                wardrobe.Add(itemName, newHat);
+                character.SetCurrentHat(newHat);
+            }
+        }
+    }
+
+    public void ChangeShield(GameObject shieldPrefab)
+    {
+        if (character.GetCurrentShield() != null) character.GetCurrentShield().SetActive(false);
+        
+        character.SetIsHoldingShield(shieldPrefab != null);
+
+        if (shieldPrefab != null && character.GetLeftHandHolder() != null)
+        {
+            string itemName = SHIELD + shieldPrefab.name;
+            if (wardrobe.ContainsKey(itemName))
+            {
+                character.SetCurrentShield(wardrobe[itemName]);
+                character.GetCurrentShield().SetActive(true);
+            }
+            else
+            {
+                GameObject newShield = Object.Instantiate(shieldPrefab, character.GetLeftHandHolder(), false);
+                newShield.transform.localPosition = Vector3.zero;
+                newShield.transform.localRotation = Quaternion.identity;
+                wardrobe.Add(itemName, newShield);
+                character.SetCurrentShield(newShield);
+            }
+        }
+    }
+
+    public void ChangeWing(GameObject wingPrefab)
+    {
+        if (character.GetCurrentWing() != null) character.GetCurrentWing().SetActive(false);
+
+        if (wingPrefab != null && character.GetBackHolder() != null)
+        {
+            string itemName = WING + wingPrefab.name;
+            if (wardrobe.ContainsKey(itemName))
+            {
+                character.SetCurrentWing(wardrobe[itemName]);
+                character.GetCurrentWing().SetActive(true);
+            }
+            else
+            {
+                GameObject newWing = Object.Instantiate(wingPrefab, character.GetBackHolder(), false);
+                newWing.transform.localPosition = Vector3.zero;
+                newWing.transform.localRotation = Quaternion.identity;
+                wardrobe.Add(itemName, newWing);
+                character.SetCurrentWing(newWing);
+            }
+        }
+    }
+
+    public void ChangeTail(GameObject tailPrefab)
+    {
+        if (character.GetCurrentTail() != null) character.GetCurrentTail().SetActive(false);
+
+        if (tailPrefab != null && character.GetTailHolder() != null)
+        {
+            string itemName = "Tail_" + tailPrefab.name;
+            if (wardrobe.ContainsKey(itemName))
+            {
+                character.SetCurrentTail(wardrobe[itemName]);
+                character.GetCurrentTail().SetActive(true);
+            }
+            else
+            {
+                GameObject newTail = Object.Instantiate(tailPrefab, character.GetTailHolder(), false);
+                newTail.transform.localPosition = Vector3.zero;
+                newTail.transform.localRotation = Quaternion.identity;
+                wardrobe.Add(itemName, newTail);
+                character.SetCurrentTail(newTail);
+            }
         }
     }
 
@@ -44,41 +140,11 @@ public class CharacterEquipment
         }
     }
 
-    public void ChangeShield(GameObject shieldPrefab)
+    public void ChangeColor(Material colorMat)
     {
-        if (character.GetCurrentShield() != null) Object.Destroy(character.GetCurrentShield());
-        
-        character.SetIsHoldingShield(shieldPrefab != null);
-
-        if (shieldPrefab != null && character.GetLeftHandHolder() != null)
+        if (colorMat != null && character.GetBodyMeshRenderer() != null)
         {
-            character.SetCurrentShield(Object.Instantiate(shieldPrefab, character.GetLeftHandHolder()));  
-            character.GetCurrentShield().transform.localPosition = Vector3.zero;
-            character.GetCurrentShield().transform.localRotation = Quaternion.identity;
-        }
-    }
-
-    public void ChangeWing(GameObject wingPrefab)
-    {
-        if (character.GetCurrentWing() != null) Object.Destroy(character.GetCurrentWing());
-
-        if (wingPrefab != null && character.GetBackHolder() != null)
-        {
-            character.SetCurrentWing(Object.Instantiate(wingPrefab, character.GetBackHolder()));
-            character.GetCurrentWing().transform.localPosition = Vector3.zero;
-            character.GetCurrentWing().transform.localRotation = Quaternion.identity;
-        }
-    }
-
-    public void ChangeTail(GameObject tailPrefab)
-    {
-        if (character.GetCurrentTail() != null) Object.Destroy(character.GetCurrentTail());
-
-        if (tailPrefab != null && character.GetTailHolder() != null)
-        {
-            character.SetCurrentTail(Object.Instantiate(tailPrefab, character.GetTailHolder()));
-            character.GetCurrentTail().transform.localPosition = Vector3.zero;
-            character.GetCurrentTail().transform.localRotation = Quaternion.identity;
+            character.GetBodyMeshRenderer().material = colorMat;
         }
     }
 
@@ -91,13 +157,5 @@ public class CharacterEquipment
         ChangeShield(setData.leftHandPrefab);
         ChangeWing(setData.accessoryPrefab);
         ChangeTail(setData.tailPrefab);
-    }
-
-    public void ChangeColor(Material colorMat)
-    {
-        if (colorMat != null && character.GetBodyMeshRenderer() != null)
-        {
-            character.GetBodyMeshRenderer().material = colorMat;
-        }
     }
 }
