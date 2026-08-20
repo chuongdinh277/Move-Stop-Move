@@ -7,7 +7,7 @@ public class AxeBullet : BulletBase
     [SerializeField] private Transform visualMesh; 
     [SerializeField] private bool isFlat = true;
 
-    public override void OnInit(Character attacker, Vector3 direction)
+    public override void OnInit(CharacterBase attacker, Vector3 direction)
     {
         base.OnInit(attacker, direction);
         
@@ -38,3 +38,4 @@ public class AxeBullet : BulletBase
         }
     }
 }
+

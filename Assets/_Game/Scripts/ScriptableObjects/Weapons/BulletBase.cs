@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class BulletBase : GameUnit
 {
@@ -7,10 +8,11 @@ public class BulletBase : GameUnit
     [SerializeField] protected float SPEED = GameConfig.WEAPON_SPEED;
     [SerializeField] protected float timeToDestroy = GameConfig.WEAPON_TIME_DESTROY;
 
-    protected Character attacker;
+    protected CharacterBase attacker;
     protected float timer;
     protected Vector3 moveDirection;
     protected Vector3 baseScale;
+    protected Vector3 startPos;
     protected virtual void Awake()
     {
         baseScale = transform.localScale;
@@ -20,7 +22,7 @@ public class BulletBase : GameUnit
         transform.Translate(moveDirection * SPEED * Time.deltaTime, Space.World);
         HandleLifeTime();
     }
-    protected void SetAttacker(Character character)
+    protected void SetAttacker(CharacterBase character)
     {
         this.attacker = character;
     }
@@ -30,7 +32,7 @@ public class BulletBase : GameUnit
     }
     protected virtual void OnTriggerEnter(Collider other)
     {
-        if (Cache.Ins.TryGetCharacter(other, out Character target))
+        if (Cache.Ins.TryGetCharacter(other, out CharacterBase target))
         {
             if (IsValidTarget(target))
             {
@@ -38,14 +40,15 @@ public class BulletBase : GameUnit
             }
         }
     }
-    public virtual void OnInit(Character attacker, Vector3 direction)
+    public virtual void OnInit(CharacterBase attacker, Vector3 direction)
     {
         SetAttacker(attacker);
         ResetLifeTime();
         SetDirection(direction);
         moveDirection = direction.normalized;
         
-        transform.localScale = baseScale * attacker.size; 
+        startPos = transform.position;
+        transform.localScale = baseScale * attacker.GetSize(); 
     }
 
     protected void SetDirection(Vector3 direction)
@@ -56,7 +59,14 @@ public class BulletBase : GameUnit
     protected void HandleLifeTime()
     {
         timer -= Time.deltaTime;
-        if (IsTimeOut())
+
+        float distanceFlow = (transform.position - startPos).sqrMagnitude;
+
+        float maxRange = attacker.GetAttackRange() * attacker.GetSize();
+
+        float maxRangeSqr = maxRange * maxRange;
+
+        if (timer <= 0 || distanceFlow >= maxRangeSqr)
         {
             OnDespawn();
         }
@@ -67,14 +77,19 @@ public class BulletBase : GameUnit
         return timer <= 0;
     }
     
-    protected bool IsValidTarget(Character target)
+    protected bool IsValidTarget(CharacterBase target)
     {
-        return target != null && target != attacker && !target.IsDead;
+        return target != null && target != attacker && !target.GetIsDead();
     }
 
-    protected virtual void HitTarget(Character target)
+    protected virtual void HitTarget(CharacterBase target)
     {
         target.OnHit();
+
+        if (attacker != null && target != null)
+        {
+            attacker.OnKillBot(target.GetLevel());
+        }
         OnDespawn();
     }
 
@@ -83,3 +98,4 @@ public class BulletBase : GameUnit
         SimplePool.Despawn(this);
     }
 }
+

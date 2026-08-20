@@ -8,7 +8,7 @@ public class Weapon : MonoBehaviour
 
     public WeaponType Type => weaponType;
 
-    public void Throw(Character attacker, Vector3 targetPosition, bool isTargeting)
+    public void Throw(CharacterBase attacker, Vector3 targetPosition, bool isTargeting)
     {
         gameObject.SetActive(false); 
 
@@ -27,3 +27,4 @@ public class Weapon : MonoBehaviour
         bullet.OnInit(attacker, exactDirection);
     }
 }
+

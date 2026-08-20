@@ -10,7 +10,7 @@ public class BoomerangBullet : BulletBase
     
     private bool isReturning = false;
 
-    public override void OnInit(Character attacker, Vector3 direction)
+    public override void OnInit(CharacterBase attacker, Vector3 direction)
     {
         base.OnInit(attacker, direction);
         isReturning = false;
@@ -38,8 +38,7 @@ public class BoomerangBullet : BulletBase
             transform.Rotate(Vector3.up * rotateSpeed * Time.deltaTime, Space.World);
         }
 
-        // 2. LOGIC QUAY ĐẦU TÌM CHỦ
-        if (attacker != null && !attacker.IsDead)
+        if (attacker != null && !attacker.GetIsDead())
         {
             float distanceToAttacker = Vector3.Distance(transform.position, attacker.TF.position);
 

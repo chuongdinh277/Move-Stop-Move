@@ -7,7 +7,7 @@ public class KnifeBullet : BulletBase
     [SerializeField] private Transform visualMesh; 
     [SerializeField] private bool isFlat = true;
 
-    public override void OnInit(Character attacker, Vector3 direction)
+    public override void OnInit(CharacterBase attacker, Vector3 direction)
     {
         base.OnInit(attacker, direction);
         
@@ -15,11 +15,11 @@ public class KnifeBullet : BulletBase
         {
             if (visualMesh != null)
             {
-                visualMesh.localEulerAngles = new Vector3(90, 0, 0);
+                visualMesh.localEulerAngles = new Vector3(90, 0, 180);
             }
             else
             {
-                transform.Rotate(90, 0, 0, Space.Self);
+                transform.Rotate(90, 0, 180, Space.Self);
             }
         }
     }
@@ -38,3 +38,4 @@ public class KnifeBullet : BulletBase
         }
     }
 }
+
